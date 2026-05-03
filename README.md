@@ -1,3 +1,3 @@
-# yatop
+# Mithra
 
-:whale: self-hosted TOTP server
+self-hosted password manager
