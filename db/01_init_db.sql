@@ -29,10 +29,10 @@ CREATE TABLE IF NOT EXISTS users (
     display_name text,
     email_address text UNIQUE NOT NULL,
     email_address_verified boolean,
-    password_hash text NOT NULL,
-    password_hash_algorithm text NOT NULL,
-    ROLE user_role DEFAULT 'user',
+    password_hash text, -- nullable for future OpenID support
+    password_hash_algorithm text,
     status user_status DEFAULT 'active',
+    ROLE user_role DEFAULT 'user',
     created_at timestamptz,
     updated_at timestamptz
 );
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS sessions (
     id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     session_hash text,
-    ip_address inet,
+    ip_address inet NOT NULL,
     user_agent text,
     created_at timestamptz,
     expires_at timestamptz,
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS totp_secrets (
     otp_algorithm otp_algorithm NOT NULL DEFAULT 'SHA1',
     digits integer NOT NULL DEFAULT 6,
     period integer NOT NULL DEFAULT 30,
-    enabled boolean,
+    enabled boolean DEFAULT TRUE,
     created_at timestamptz,
     updated_at timestamptz,
     CONSTRAINT valid_totp_digits CHECK (digits IN (6, 7, 8)),
