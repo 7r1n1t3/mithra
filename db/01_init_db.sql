@@ -28,13 +28,13 @@ CREATE TABLE IF NOT EXISTS users (
     username text UNIQUE NOT NULL,
     display_name text,
     email_address text UNIQUE NOT NULL,
-    email_address_verified boolean,
+    email_address_verified boolean DEFAULT FALSE,
     password_hash text, -- nullable for future OpenID support
     password_hash_algorithm text,
     status user_status DEFAULT 'active',
     ROLE user_role DEFAULT 'user',
-    created_at timestamptz,
-    updated_at timestamptz
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now()
 );
 
 CREATE TABLE IF NOT EXISTS settings (
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS settings (
     display_language text,
     time_zone text,
     default_theme text,
-    updated_at timestamptz
+    updated_at timestamptz DEFAULT now()
 );
 
 -- User security
@@ -63,8 +63,8 @@ CREATE TABLE IF NOT EXISTS sessions (
     session_hash text,
     ip_address inet NOT NULL,
     user_agent text,
-    created_at timestamptz,
-    expires_at timestamptz,
+    created_at timestamptz DEFAULT now(),
+    expires_at timestamptz DEFAULT now() + interval '1 year',
     revoked_at timestamptz
 );
 
@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS security_events (
     ip_address inet,
     user_agent text,
     metadata jsonb,
-    created_at timestamptz
+    created_at timestamptz DEFAULT now()
 );
 
 -- Secrets
@@ -91,8 +91,8 @@ CREATE TABLE IF NOT EXISTS totp_secrets (
     digits integer NOT NULL DEFAULT 6,
     period integer NOT NULL DEFAULT 30,
     enabled boolean DEFAULT TRUE,
-    created_at timestamptz,
-    updated_at timestamptz,
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now(),
     CONSTRAINT valid_totp_digits CHECK (digits IN (6, 7, 8)),
     CONSTRAINT valid_totp_period CHECK (period > 0)
 );
@@ -108,10 +108,10 @@ CREATE TABLE IF NOT EXISTS external_recovery_codes (
     encryption_algorithm text NOT NULL,
     issuer text,
     account_name text,
-    enabled boolean,
+    enabled boolean DEFAULT TRUE,
     used_at timestamptz,
-    created_at timestamptz,
-    updated_at timestamptz
+    created_at timestamptz DEFAULT now(),
+    updated_at timestamptz DEFAULT now()
 );
 
 CREATE INDEX idx_settings_user_id ON settings (user_id);
