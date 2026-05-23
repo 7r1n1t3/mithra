@@ -1,5 +1,25 @@
-FROM debian:bookworm
+FROM rust:1-bookworm AS builder
 
-RUN useradd mithra
-USER mithra
+WORKDIR /app
 
+COPY Cargo.toml ./
+COPY src ./src
+COPY static ./static
+
+RUN cargo build --release
+
+
+FROM debian:bookworm-slim
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    libssl3 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /app/target/release/totp-mvp ./totp-mvp
+
+EXPOSE 8080
+
+CMD ["./totp-mvp"]

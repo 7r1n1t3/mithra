@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mithra | register</title>
+  </head>
+  <body>
+    <h1>Mithra</h1>
+    <h2>Create account</h2>
+
+    <form id="submit-form">
+      <label>
+        username:
+        <input id="username" name="username" type="text" required />
+      </label>
+
+      <br /><br />
+
+      <label>
+        display name:
+        <input id="display-name" name="display-name" type="text" />
+      </label>
+
+      <br /><br />
+
+      <label>
+        email:
+        <input id="email" name="email" type="email" required />
+      </label>
+
+      <br /><br />
+
+      <label>
+        password:
+        <input id="password" name="password" type="password" required />
+      </label>
+
+      <br /><br />
+
+      <label>
+        confirm password:
+        <input
+          id="confirm-password"
+          name="confirm-password"
+          type="password"
+          required
+        />
+      </label>
+
+      <br /><br />
+
+      <button type="submit">register</button>
+    </form>
+
+    <h2>Response</h2>
+    <pre id="output"></pre>
+
+    <script src="register.js"></script>
+  </body>
+</html>

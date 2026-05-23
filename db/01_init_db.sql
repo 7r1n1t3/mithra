@@ -34,7 +34,8 @@ CREATE TABLE IF NOT EXISTS users (
     status user_status DEFAULT 'active',
     ROLE user_role DEFAULT 'user',
     created_at timestamptz DEFAULT now(),
-    updated_at timestamptz DEFAULT now()
+    updated_at timestamptz DEFAULT now(),
+    CONSTRAINT p_hash_required_iff_password_provided CHECK ((password_hash IS NULL) = (password_hash_algorithm IS NULL))
 );
 
 CREATE TABLE IF NOT EXISTS settings (
