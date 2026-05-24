@@ -18,8 +18,8 @@ RUN apt-get update && apt-get install -y \
     libssl3 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /app/target/release/totp-mvp ./totp-mvp
+COPY --from=builder /app/target/release/mithra ./mithra
 
 EXPOSE 8080
 
-CMD ["./totp-mvp"]
+CMD ["./mithra"]
