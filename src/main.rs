@@ -1,10 +1,15 @@
-use actix_web::{App, HttpServer, web};
+use actix_files::{Files, NamedFile};
+use actix_web::{App, HttpServer, Result, web};
 use sqlx::postgres::PgPoolOptions;
 
 mod dto;
 mod routes;
 mod services;
 mod state;
+
+async fn spa_index() -> Result<NamedFile> {
+    Ok(NamedFile::open("./frontend/dist/index.html")?)
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -22,6 +27,11 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(web::Data::new(state.clone()))
             .configure(routes::configure)
+            .service(
+                Files::new("/", "./frontend/dist")
+                    .index_file("index.html")
+                    .default_handler(web::to(spa_index)),
+            )
     })
     .bind(("0.0.0.0", 8080))?
     .run()

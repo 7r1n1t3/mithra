@@ -1,25 +1,20 @@
-FROM rust:1-bookworm AS builder
-
-WORKDIR /app
-
-COPY Cargo.toml ./
-COPY src ./src
-COPY static ./static
-
-RUN cargo build --release
-
-
 FROM debian:bookworm-slim
 
-WORKDIR /app
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
-    libssl3 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /app/target/release/mithra ./mithra
+COPY target/release/mithra /usr/local/bin/mithra
+
+WORKDIR /app
+
+COPY static ./static
+COPY frontend/dist ./frontend/dist
+
+RUN useradd mithra
+USER mithra
 
 EXPOSE 8080
 
-CMD ["./mithra"]
+CMD ["/usr/local/bin/mithra"]
