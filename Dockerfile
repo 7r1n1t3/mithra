@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-COPY target/release/mithra /usr/local/bin/mithra
+COPY backend/target/release/mithra /usr/local/bin/mithra
 
 WORKDIR /app
 
