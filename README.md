@@ -1,4 +1,4 @@
-# Mithra
+# mithra
 
 ![logo](/frontend/public/full_white.svg)
 
