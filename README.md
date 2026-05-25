@@ -2,7 +2,7 @@
 
 ![logo](/frontend/public/full_white.svg)
 
-**self-hosted password manager**
+**self-hosted TOTP vault**
 
 # Setup
 
