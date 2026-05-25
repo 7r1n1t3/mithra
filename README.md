@@ -1,6 +1,8 @@
 # Mithra
 
-self-hosted password manager
+![logo](/frontend/public/full_white.svg)
+
+**self-hosted password manager**
 
 # Setup
 
@@ -14,6 +16,7 @@ npm run build
 ## Backend
 
 ```bash
+cd backend
 cargo build --release
 ```
 
@@ -30,4 +33,3 @@ Set environment variables accordingly in .env
 ```bash
 docker compose up --build
 ```
-
