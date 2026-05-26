@@ -9,7 +9,6 @@ COPY backend/target/release/mithra /usr/local/bin/mithra
 
 WORKDIR /app
 
-COPY static ./static
 COPY frontend/dist ./frontend/dist
 
 RUN useradd mithra
