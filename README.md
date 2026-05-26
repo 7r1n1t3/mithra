@@ -1,8 +1,10 @@
-# mithra
+<p align="center">
+  <img src="frontend/public/full_white.svg" alt="Logo" height=100>
+  <br/>
+  <br/>
+  <b>self-hosted TOTP vault</b>
+</p>
 
-![logo](/frontend/public/full_white.svg)
-
-**self-hosted TOTP vault**
 
 # Setup
 
@@ -23,10 +25,9 @@ cargo build --release
 ## environment variables
 
 ```bash
-cp .env.example .env
-```
+cp .env.example .env # then set environment variables accordingly in .env
 
-Set environment variables accordingly in .env
+```
 
 # Start application
 
