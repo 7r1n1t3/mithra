@@ -1,10 +1,9 @@
 <p align="center">
-  <img src="frontend/public/full_white.svg" alt="Logo" height=100>
+  <img src="frontend/static/full_white.svg" alt="Logo" height=100>
   <br/>
   <br/>
   <b>self-hosted TOTP vault</b>
 </p>
-
 
 # Setup
 
