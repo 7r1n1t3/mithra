@@ -1,35 +1,41 @@
 <script>
+	import Box from '$lib/Box.svelte';
+	import Logo from  '$lib/Logo.svelte';
+	import Input from  '$lib/Input.svelte';
+
 	let email = $state('');
 	let password = $state('');
-	let rememberme = $state(false);
 </script>
 
-<main>
-    <h1>Mithra</h1>
-    <h2>sign-in</h2>
+<div class="signin">
+	<Box>
+		<Logo/>
+		<h1 class="title">Sign-in</h1>
+		<form id="signin-form">
+			<Input bind:value={email} name='email' type='email'/>
+			<Input bind:value={password} name='password' type='Password'/>
+		</form>
+		<div class="sign-buttons">
+			<button type="submit">sign-in</button>
+			<a href="/register">register</a>
+		</div>
+	</Box>
+</div>
 
-    <form id="signin-form">
-      <label>
-        email:
-        <input bind:value={email} id="email" name="email" type="email" required />
-      </label>
+<style>
+	.signin {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 1rem;
+	}
 
-      <br /><br />
-
-      <label>
-        password:
-        <input bind:value={password} id="password" name="password" type="password" required />
-      </label>
-
-      <br /><br />
-
-      <label>
-        remember me
-        <input bind:value={rememberme} id="rememberme" name="rememberme" type="checkbox" required />
-      </label>
-
-      <br /><br />
-
-      <button type="submit">register</button>
-    </form>
-</main>
+	#signin-form {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 1rem;
+	}
+</style>

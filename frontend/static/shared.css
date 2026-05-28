@@ -1,0 +1,20 @@
+:root {
+  --color-background: #2e3440;
+  --color-text: #d8dee9;
+  --color-surface: #1e293b;
+  --color-muted-text: #94a3b8;
+  --color-primary: #3b82f6;
+  --color-error: #ef4444;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: system-ui, sans-serif;
+}

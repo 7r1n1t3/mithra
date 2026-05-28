@@ -1,7 +1,10 @@
-<script lang="ts">
-	import Logo from  '../../lib/Logo.svelte';
-	import Error from '../../lib/Error.svelte';
-	import Input from '../../lib/Input.svelte';
+<script>
+	import Box from   '$lib/Box.svelte';
+	import Logo from  '$lib/Logo.svelte';
+	import Error from '$lib/Error.svelte';
+	import Input from '$lib/Input.svelte';
+
+	let register_button_pressed = $state(false);
 
 	let username = $state('');
 	let display_name = $state('');
@@ -9,79 +12,84 @@
 	let password = $state('');
 	let confirm_password = $state('');
 
-	let valid_password = $derived(password === confirm_password);
+	let valid_username = $derived(username.trim().length > 0);
+	let valid_display_name = $derived(display_name.trim().length > 0);
 	let valid_email_pattern = /^\S+@\S+\.\S+$/ ;
 	let valid_email = $derived(valid_email_pattern.test(email));
+	let valid_password = $derived(password.length >= 8);
+	let passwords_match = $derived(password === confirm_password);
 
-	let all_valid = $derived(valid_email && valid_password);
-	let all_empty = $derived(username === '' && display_name === '' && email === '' && password === '');
+	let all_valid = $derived(
+		valid_username &&
+		valid_display_name &&
+		valid_email &&
+		valid_password &&
+		passwords_match
+	);
 
 	function register_user() {
+		register_button_pressed = true;
 		if (all_valid) {
 			fetch('/api/register', {
 			  method: 'POST',
 			  headers: {
 				'Content-Type': 'application/json'
 			  },
-			  body: JSON.stringify({ key: 'value' })
+			  body: JSON.stringify({
+				  username: username,
+				  display_name: display_name,
+				  email: email,
+				  password: password
+			  })
 			});
 		}
 	}
 </script>
 
-<div class="app">
-	<Logo />
-
-	<main class="body">
-
-		<h2>Create account</h2>
-
-		<form id="submit-form">
+<div class="register">
+	<Box>
+		<Logo/>
+		<h1 class="title">Create account</h1>
+		<form id="submit-form" class="submit-form">
 			<Input bind:value={username} name='Username'/>
-			<br/>
 			<Input bind:value={display_name} name='Display name'/>
-			<br/>
 			<Input bind:value={email} name='email' type='email'/>
-			<br/>
 			<Input bind:value={password} name='password' type='Password'/>
-			<br/>
-			<Input bind:value={confirm_password} name='username' type='Password'/>
-			<br/>
-
-			{#if !valid_password}
-				<Error content='passwords do not match' />
-			{:else if !valid_email && email !== ''} 
-				<Error content="are you sure that's an email" />
-			{:else if !all_valid && !all_empty} 
-				<Error content="something seems wrong..." />
-			{/if}
+			<Input bind:value={confirm_password} name='confirm password' type='Password'/>
 
 		</form>
 
-		<button type="submit" onclick={register_user}>register</button>
-		<a href="/signin">sign in</a>
-		<br />
+		<div class="sign-buttons">
+			<button type="submit" onclick={register_user}>register</button>
+			<a href="/signin">sign in</a>
+		</div>
 
-	</main>
-
-	<p>Mithra <a href="https://git.hlsec.top/7r1n1t3/mithra">repo</a></p>
+		{#if !passwords_match}
+			<Error content='passwords do not match.' />
+		{:else if password !== '' && !valid_password}
+			<Error content='password must contain a minimum of 8 characters.' />
+		{:else if !valid_email && register_button_pressed} 
+			<Error content="are you sure that's an email?" />
+		{:else if !all_valid && register_button_pressed} 
+			<Error content="something seems wrong..." />
+		{/if}
+	</Box>
 </div>
 
 <style>
-  :global(body) {
-    margin: 0;
-    font-family: system-ui, sans-serif;
-	align-items: "center";
-  }
+	.register {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 1rem;
+	}
 
-  .app {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .body {
-    flex: 1;
-    padding: clamp(1rem, 3vw, 3rem);
-  }
+	.submit-form {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		gap: 1rem;
+	}
 </style>

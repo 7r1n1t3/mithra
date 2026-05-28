@@ -3,8 +3,13 @@
 </script>
 
 <main>
-    <label>
-    	{name}:
-        <input bind:value={value} id={name} {name} {type} {required} />
-    </label>
+	<input bind:value={value} id={name} placeholder={name} class="input-field" {name} {type} {required} />
 </main>
+
+<style>
+	.input-field {
+		background-color: var(--color-background);
+		border: 1px solid var(--color-muted-text);
+		border-radius: 4px;
+	}
+</style>
