@@ -5,6 +5,14 @@
   <b>self-hosted TOTP vault</b>
 </p>
 
+# Installation
+
+copy the provided docker-compose.yml.example and .env.example from the repo and edit them accordingly then run
+
+```bash
+docker compose up
+```
+
 # Setup
 
 ## environment variables
