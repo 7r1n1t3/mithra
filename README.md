@@ -11,7 +11,6 @@
 
 ```bash
 cp .env.example .env # then set environment variables accordingly in .env
-
 ```
 
 # Start application
