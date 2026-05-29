@@ -8,7 +8,7 @@ mod services;
 mod state;
 
 async fn spa_index() -> Result<NamedFile> {
-    Ok(NamedFile::open("./frontend/dist/index.html")?)
+    Ok(NamedFile::open("./build/index.html")?)
 }
 
 #[actix_web::main]
@@ -28,7 +28,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(state.clone()))
             .configure(routes::configure)
             .service(
-                Files::new("/", "./frontend/dist")
+                Files::new("/", "./build")
                     .index_file("index.html")
                     .default_handler(web::to(spa_index)),
             )

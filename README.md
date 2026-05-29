@@ -7,20 +7,6 @@
 
 # Setup
 
-## Frontend
-
-```bash
-cd frontend
-npm run build
-```
-
-## Backend
-
-```bash
-cd backend
-cargo build --release
-```
-
 ## environment variables
 
 ```bash

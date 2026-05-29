@@ -1,0 +1,10 @@
+.git
+.gitignore
+
+./frontend/node_modules
+./frontend/dist
+./frontend/.svelte-kit
+./backend/target
+
+.env
+.env.*
