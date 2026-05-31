@@ -1,5 +1,5 @@
 use actix_files::{Files, NamedFile};
-use actix_web::{App, HttpServer, Result, web};
+use actix_web::{App, HttpServer, web};
 use sqlx::postgres::PgPoolOptions;
 
 mod dto;
@@ -7,8 +7,8 @@ mod routes;
 mod services;
 mod state;
 
-async fn spa_index() -> Result<NamedFile> {
-    Ok(NamedFile::open("./build/index.html")?)
+async fn spa_index() -> actix_web::Result<NamedFile> {
+    Ok(NamedFile::open("./build/200.html")?)
 }
 
 #[actix_web::main]
@@ -29,7 +29,7 @@ async fn main() -> std::io::Result<()> {
             .configure(routes::configure)
             .service(
                 Files::new("/", "./build")
-                    .index_file("index.html")
+                    .index_file("200.html")
                     .default_handler(web::to(spa_index)),
             )
     })
