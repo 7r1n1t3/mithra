@@ -1,0 +1,48 @@
+name: Development Task
+about: Issue Template
+title: ""
+ref: "main"
+
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      multiple: true
+      options:
+        - SvelteKit frontend
+        - Actix backend
+        - API
+        - Authentication
+        - Encryption and key management
+        - Persistence
+        - TOTP handling
+        - CI and deployment
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What should change and why?
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation notes
+      description: Relevant routes, components, handlers, schema changes, or design decisions.
+
+  - type: textarea
+    id: security
+    attributes:
+      label: Security impact
+      description: Note any impact on secrets, authentication, authorization, encryption, logging, or browser storage.
+
+  - type: textarea
+    id: tests
+    attributes:
+      label: Test plan
+      description: Automated tests and manual checks.
