@@ -1,5 +1,6 @@
 <script>
 	let { children } = $props();
+	export const ssr = false;
 </script>
 
 {@render children()}
