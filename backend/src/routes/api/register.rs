@@ -33,7 +33,7 @@ async fn post_register(
         return Ok(HttpResponse::Created().json(RegisterResponse {
             success: false,
             username: payload.username.clone(),
-            failure_reason: "username is already registered.".to_string(),
+            failure_reason: format!("{0} is already registered.", payload.username).to_string(),
         }));
     }
     Ok(HttpResponse::Created().json(RegisterResponse {
