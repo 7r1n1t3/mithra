@@ -52,38 +52,30 @@
 			return;
 		}
 
-		try {
-			const response = await fetch('/api/register', {
-			  method: 'POST',
-			  headers: {
-				'Content-Type': 'application/json'
-			  },
-			  body: JSON.stringify({
-				  username: username,
-				  display_name: display_name,
-				  email: email,
-				  password: password
-			  })
-			});
+		const response = await fetch('/api/register', {
+		  method: 'POST',
+		  headers: {
+			'Content-Type': 'application/json'
+		  },
+		  body: JSON.stringify({
+			  username: username,
+			  display_name: display_name,
+			  email: email,
+			  password: password
+		  })
+		});
 
-			const body = await response.json();
-			if (!response.ok) {
-				throw new Error(
-					body.failure_reason ??
-					`Request failed with status ${response.status}`
-				);
-			}
+		const body = await response.json();
+		if (!response.ok) {
+			error_message = body.failure_reason ??
+				`Request failed with status ${response.status}`
+		}
 
-			if (body.success === true) {
-				notice_message = `User ${body.username ?? username} succesfully created.`;
-			} else {
-				error_message = body.failure_reason ??
-					`Internal server error: ${body.failure_reason}`;
-			}
-		} catch (error) {
-			error_message = error instanceof Error
-				? error.message
-				: 'Internal server error';
+		if (body.success === true) {
+			notice_message = `User ${body.username ?? username} succesfully created.`;
+		} else {
+			error_message = body.failure_reason ??
+				`Internal server error: ${body.failure_reason}`;
 		}
 	}
 </script>
@@ -92,7 +84,7 @@
 	<Box>
 		<Logo/>
 		<h1 class="title">Create account</h1>
-		<form id="submit-form" class="submit-form" method="POST" submit={register_user}>
+		<form id="submit-form" class="submit-form">
 			<Input bind:value={username} name='Username'/>
 			<Input bind:value={display_name} name='Display name'/>
 			<Input bind:value={email} name='email' type='email'/>
@@ -100,7 +92,7 @@
 			<Input bind:value={confirm_password} name='confirm password' type='Password'/>
 
 			<div class="sign-buttons">
-				<input type="submit" value="Register" onclick={register_user}>
+				<button type="submit" onclick={register_user}>Register</button>
 				<a href="/signin">sign in</a>
 			</div>
 		</form>

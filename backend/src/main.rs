@@ -13,7 +13,8 @@ async fn spa_index() -> actix_web::Result<NamedFile> {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let database_url = std::env::var("DB_URL").expect("DB_URL environment variable must be set");
+    let database_url =
+        std::env::var("DATABASE_URL").expect("DATABASE_URL environment variable must be set");
 
     let pool = PgPoolOptions::new()
         .max_connections(5)

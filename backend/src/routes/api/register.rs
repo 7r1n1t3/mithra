@@ -12,11 +12,12 @@ async fn post_register(
     let password_hash =
         password::hash_password(&payload.password).map_err(error::ErrorInternalServerError)?;
 
-    sqlx::query(
+    let result = sqlx::query(
         r#"
         INSERT INTO users
         (username, display_name, email_address, password_hash, password_hash_algorithm)
         VALUES ($1, $2, $3, $4, $5)
+        ON CONFLICT DO NOTHING
         "#,
     )
     .bind(&payload.username)
@@ -24,10 +25,17 @@ async fn post_register(
     .bind(&payload.email)
     .bind(&password_hash)
     .bind("argon2")
-    .fetch_one(&state.pool)
+    .execute(&state.pool)
     .await
     .map_err(error::ErrorInternalServerError)?;
 
+    if result.rows_affected() == 0 {
+        return Ok(HttpResponse::Created().json(RegisterResponse {
+            success: false,
+            username: payload.username.clone(),
+            failure_reason: "username is already registered.".to_string(),
+        }));
+    }
     Ok(HttpResponse::Created().json(RegisterResponse {
         success: true,
         username: payload.username.clone(),
