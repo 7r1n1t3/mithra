@@ -1,10 +1,13 @@
 <script>
 	import Box from   '$lib/Box.svelte';
 	import Logo from  '$lib/Logo.svelte';
-	import Error from '$lib/Error.svelte';
 	import Input from '$lib/Input.svelte';
+	import ErrorComp from '$lib/Error.svelte';
+	import Notice from '$lib/Notice.svelte';
 
 	let register_button_pressed = $state(false);
+	let notice_message = $state('');
+	let error_message = $state('');
 
 	let username = $state('');
 	let display_name = $state('');
@@ -27,10 +30,30 @@
 		passwords_match
 	);
 
-	function register_user() {
+	function check_arg_valid() {
+		if (!passwords_match) {
+			error_message = 'passwords do not match.';
+		} else if (password !== '' && !valid_password) {
+			error_message = 'password must contain a minimum of 8 characters.';
+		} else if (!valid_email)  {
+			error_message = "are you sure that's an email?";
+		} else if (!all_valid) {
+			error_message = "something seems wrong...";
+		} else {
+			error_message = "";
+			return true;
+		}
+	}
+
+	async function register_user() {
 		register_button_pressed = true;
-		if (all_valid) {
-			fetch('/api/register', {
+
+		if (!check_arg_valid()) {
+			return;
+		}
+
+		try {
+			const response = await fetch('/api/register', {
 			  method: 'POST',
 			  headers: {
 				'Content-Type': 'application/json'
@@ -42,6 +65,25 @@
 				  password: password
 			  })
 			});
+
+			const body = await response.json();
+			if (!response.ok) {
+				throw new Error(
+					body.failure_reason ??
+					`Request failed with status ${response.status}`
+				);
+			}
+
+			if (body.success === true) {
+				notice_message = `User ${body.username ?? username} succesfully created.`;
+			} else {
+				error_message = body.failure_reason ??
+					`Internal server error: ${body.failure_reason}`;
+			}
+		} catch (error) {
+			error_message = error instanceof Error
+				? error.message
+				: 'Internal server error';
 		}
 	}
 </script>
@@ -50,28 +92,26 @@
 	<Box>
 		<Logo/>
 		<h1 class="title">Create account</h1>
-		<form id="submit-form" class="submit-form">
+		<form id="submit-form" class="submit-form" method="POST" submit={register_user}>
 			<Input bind:value={username} name='Username'/>
 			<Input bind:value={display_name} name='Display name'/>
 			<Input bind:value={email} name='email' type='email'/>
 			<Input bind:value={password} name='password' type='Password'/>
 			<Input bind:value={confirm_password} name='confirm password' type='Password'/>
 
+			<div class="sign-buttons">
+				<input type="submit" value="Register" onclick={register_user}>
+				<a href="/signin">sign in</a>
+			</div>
 		</form>
 
-		<div class="sign-buttons">
-			<button type="submit" onclick={register_user}>register</button>
-			<a href="/signin">sign in</a>
-		</div>
-
-		{#if !passwords_match}
-			<Error content='passwords do not match.' />
-		{:else if password !== '' && !valid_password}
-			<Error content='password must contain a minimum of 8 characters.' />
-		{:else if !valid_email && register_button_pressed} 
-			<Error content="are you sure that's an email?" />
-		{:else if !all_valid && register_button_pressed} 
-			<Error content="something seems wrong..." />
+		{#if register_button_pressed}
+			{#if error_message !== ''}
+				<ErrorComp content={error_message}/>
+			{/if}
+			{#if notice_message !== ''}
+				<Notice content={notice_message}/>
+			{/if}
 		{/if}
 	</Box>
 </div>
