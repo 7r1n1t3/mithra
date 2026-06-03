@@ -1,0 +1,171 @@
+erDiagram
+%% enums
+  user_status {
+    enum active
+    enum locked
+  }
+
+  user_role {
+    enum owner
+    enum admin
+    enum user
+  }
+
+  event_type {
+    enum login_success
+    enum login_failure
+    enum account_locked
+  }
+
+  totp_algorithm {
+    enum sha1
+    enum sha256
+    enum sha512
+  }
+
+  hash_algorithm {
+    enum argon2
+    enum argon2i
+    enum argon2id
+    enum argon2id
+    enum scrypt
+    enum bcrypt
+  }
+  
+  USERS {
+    integer id PK
+    text username UK
+    text display_name
+    text email_address UK
+    boolean email_address_verified
+    boolean locked
+    text password_hash
+    hash_algorithm password_hash_algorithm
+    user_status status
+    user_role user_role
+    timestamptz created_at
+  }
+  
+  USERS_CHANGES {
+    integer id PK
+    integer user_id FK
+    text changed_parameter
+    timestamptz changed_at
+    text old_value
+    text new_value
+  }
+  
+  SETTINGS {
+    integer id PK
+    integer user_id FK
+    text display_language
+    text time_zone
+    text default_theme
+  }
+  
+  SETTINGS_CHANGES {
+    integer id PK
+    integer settings_id FK
+    text changed_parameter
+    timestamptz changed_at
+    text old_value
+    text new_value
+  }
+  
+  
+  LOGIN_ATTEMPTS {
+    integer id PK
+    integer user_id FK
+    inet ip_address
+    text user_agent
+    boolean success
+    timestamptz attempted_at
+    text failure_reason
+  }
+  
+  SESSIONS {
+    integer id PK
+    integer user_id FK
+    text session_hash
+    inet ip_address
+    text user_agent
+    timestamptz created_at
+    timestamptz expires_at
+    timestamptz revoked_at
+  }
+  
+  SECURITY_EVENTS {
+    integer id PK
+    integer user_id FK
+    event_type event_type
+    inet ip_address
+    text user_agent
+    timestamptz created_at
+  }
+  
+  TOTP_SECRETS {
+    integer id PK
+    integer user_id FK
+    text label
+    text issuer
+    text image_path
+    bytea secret_key_encrypted
+    bytea secret_key_nonce
+    text secret_key_key_id
+    totp_algorithm totp_algorithm
+    integer digits
+    integer period
+    boolean enabled
+    timestamptz created_at
+    timestamptz updated_at
+  }
+  
+  EXTERNAL_RECOVERY_CODES {
+    integer id PK
+    integer user_id FK
+    integer totp_secret_id FK
+    bytea code_encrypted
+    bytea code_nonce
+    text code_key_id
+    bytea encryption_salt
+    text encryption_algorithm
+    text issuer
+    text account_name
+    boolean enabled
+    timestamptz created_at
+    timestamptz updated_at
+  }
+  
+  CODES_USAGES {
+    integer id PK
+    integer session_id FK
+    integer totp_id FK
+    integer recovery_code_id FK
+    timestamptz used_at
+  }
+  
+  CODES_CHANGES {
+    integer id PK
+    integer totp_id FK
+    integer recovery_code_id FK
+    text changed_parameter
+    timestamptz changed_at
+    text old_value
+    text new_value
+  }
+
+  USERS ||--o{ SETTINGS : "has"
+  USERS ||--o{ LOGIN_ATTEMPTS : "logged on"
+  USERS ||--o{ SESSIONS : "has"
+  USERS ||--o{ SECURITY_EVENTS : "generates"
+  USERS ||--o{ TOTP_SECRETS : "owns"
+  USERS ||--o{ EXTERNAL_RECOVERY_CODES : "owns"
+  USERS ||--o{ USERS_CHANGES: "has"
+  TOTP_SECRETS o|--o{ EXTERNAL_RECOVERY_CODES : "may provide"
+  TOTP_SECRETS ||--o{ CODES_USAGES : "used"
+  EXTERNAL_RECOVERY_CODES ||--o{ CODES_USAGES : "used"
+  SETTINGS ||--o{ SETTINGS_CHANGES: "has"
+  SESSIONS ||--o{ CODES_USAGES: "used"
+  TOTP_SECRETS ||--o{ CODES_CHANGES: "has"
+  EXTERNAL_RECOVERY_CODES ||--o{ CODES_CHANGES: "has"
+
