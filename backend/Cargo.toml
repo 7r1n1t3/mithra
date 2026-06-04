@@ -5,7 +5,12 @@ edition = "2024"
 
 [dependencies]
 actix-web = "4"
+cookie = "0.16"
+actix-session = { version = "0.11.0", features = ["redis-session", "redis-session-native-tls"] }
 actix-files = "0.6"
 serde = { version = "1", features = ["derive"] }
-sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "macros"] }
+sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "postgres", "macros", "chrono", "ipnet"] }
 argon2 = "0.5"
+actix-identity = "0.9.0"
+getrandom = "0.4.2"
+chrono = { version = "0.4.45", features = ["serde"] }

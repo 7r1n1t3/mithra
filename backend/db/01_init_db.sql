@@ -32,7 +32,7 @@ CREATE TYPE hash_algorithm AS ENUM (
 
 -- User
 CREATE TABLE IF NOT EXISTS users (
-    id serial PRIMARY KEY,
+    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     username text UNIQUE NOT NULL,
     display_name text,
     email_address text UNIQUE NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE TABLE IF NOT EXISTS users_changes (
-    id serial PRIMARY KEY,
+    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id integer REFERENCES users (id) ON DELETE SET NULL,
     changed_parameter text,
     changed_at timestamptz NOT NULL DEFAULT now(),
@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS users_changes (
 );
 
 CREATE TABLE IF NOT EXISTS settings (
-    id serial PRIMARY KEY,
+    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id integer NOT NULL REFERENCES users (id) ON DELETE SET NULL,
     display_language text,
     time_zone text,
@@ -63,18 +63,18 @@ CREATE TABLE IF NOT EXISTS settings (
 );
 
 CREATE TABLE IF NOT EXISTS settings_changes (
-    id serial PRIMARY KEY,
+    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     setting_id integer NOT NULL REFERENCES settings (id) ON DELETE SET NULL,
     changed_parameter text,
-    changed_at timestampz NOT NULL DEFAULT now(),
+    changed_at timestamptz NOT NULL DEFAULT now(),
     old_value text,
     new_value text
 );
 
 -- User security
 CREATE TABLE IF NOT EXISTS login_attempts (
-    id serial PRIMARY KEY,
-    user_id integer REFERENCES users (id) ON DELETE CASCADE,
+    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    user_id integer REFERENCES users (id) ON DELETE SET NULL,
     ip_address inet,
     user_agent text,
     success boolean NOT NULL,
@@ -83,19 +83,19 @@ CREATE TABLE IF NOT EXISTS login_attempts (
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
-    id serial PRIMARY KEY,
+    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
-    session_hash text,
+    session_hash bytea NOT NULL,
     ip_address inet NOT NULL,
     user_agent text,
     created_at timestamptz DEFAULT now(),
-    expires_at timestamptz DEFAULT now() + interval '1 year',
+    expires_at timestamptz DEFAULT now() + interval '1 day',
     revoked_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS security_events (
-    id serial PRIMARY KEY,
-    user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    user_id integer NOT NULL REFERENCES users (id) ON DELETE SET NULL,
     event_type event_type NOT NULL,
     ip_address inet,
     user_agent text,
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS security_events (
 
 -- Secrets
 CREATE TABLE IF NOT EXISTS totp_secrets (
-    id serial PRIMARY KEY,
+    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     label text NOT NULL,
     issuer text,
@@ -122,7 +122,7 @@ CREATE TABLE IF NOT EXISTS totp_secrets (
 );
 
 CREATE TABLE IF NOT EXISTS external_recovery_codes (
-    id serial PRIMARY KEY,
+    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     user_id integer NOT NULL REFERENCES users (id) ON DELETE CASCADE,
     totp_secret_id integer REFERENCES totp_secrets (id) ON DELETE SET NULL,
     code_encrypted bytea NOT NULL,
@@ -138,23 +138,23 @@ CREATE TABLE IF NOT EXISTS external_recovery_codes (
 );
 
 CREATE TABLE IF NOT EXISTS codes_usages (
-    id serial PRIMARY KEY,
+    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     totp_id integer REFERENCES totp_secrets (id) ON DELETE SET NULL,
     recovery_code_id integer REFERENCES external_recovery_codes (id) ON DELETE SET NULL,
     session_id integer REFERENCES sessions (id) ON DELETE SET NULL,
     used_at timestamptz,
-    CONSTRAINT totp_id_required_iff_recovery_code_id_not_provided CHECK ((password_hash IS NULL) = (password_hash_algorithm IS NOT NULL))
+    CONSTRAINT totp_id_required_iff_recovery_code_id_not_provided CHECK ((totp_id IS NULL) = (recovery_code_id IS NOT NULL))
 );
 
 CREATE TABLE IF NOT EXISTS codes_changes (
-    id serial PRIMARY KEY,
+    id integer PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     totp_id integer REFERENCES totp_secrets (id) ON DELETE SET NULL,
     recovery_code_id integer REFERENCES external_recovery_codes (id) ON DELETE SET NULL,
     changed_parameter text,
-    changed_at timestampz NOT NULL DEFAULT now(),
+    changed_at timestamptz NOT NULL DEFAULT now(),
     old_value text,
     new_value text,
-    CONSTRAINT totp_id_required_iff_recovery_code_id_not_provided CHECK ((password_hash IS NULL) = (password_hash_algorithm IS NOT NULL))
+    CONSTRAINT totp_id_required_iff_recovery_code_id_not_provided CHECK ((totp_id IS NULL) = (recovery_code_id IS NOT NULL))
 );
 
 CREATE INDEX idx_settings_user_id ON settings (user_id);

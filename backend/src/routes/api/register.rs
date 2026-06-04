@@ -25,7 +25,7 @@ async fn post_register(
     .bind(&payload.email)
     .bind(&password_hash)
     .bind("argon2")
-    .execute(&state.pool)
+    .execute(&state.pgpool)
     .await
     .map_err(error::ErrorInternalServerError)?;
 

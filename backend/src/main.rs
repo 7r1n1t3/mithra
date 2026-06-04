@@ -1,31 +1,45 @@
 use actix_files::{Files, NamedFile};
-use actix_web::{App, HttpServer, web};
+use actix_session::{SessionMiddleware, storage::RedisSessionStore};
+use actix_web::{App, HttpServer, cookie::Key, web};
 use sqlx::postgres::PgPoolOptions;
 
 mod dto;
 mod routes;
 mod services;
-mod state;
+use crate::dto::state;
 
 async fn spa_index() -> actix_web::Result<NamedFile> {
+    // svelte fallback page
     Ok(NamedFile::open("./build/200.html")?)
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let database_url =
+    // Postgres
+    let postgres_url =
         std::env::var("DATABASE_URL").expect("DATABASE_URL environment variable must be set");
-
-    let pool = PgPoolOptions::new()
+    let pgpool = PgPoolOptions::new()
         .max_connections(5)
-        .connect(&database_url)
+        .connect(&postgres_url)
         .await
         .expect("Failed to connect to PostgreSQL");
 
-    let state = state::AppState { pool };
+    // Redis
+    let redis_url = std::env::var("REDIS_URL").expect("REDIS_URL environment variable is missing");
+    let redis_store = RedisSessionStore::new(redis_url).await.unwrap();
+    // When using `Key::generate()` it is important to initialize outside of the
+    // `HttpServer::new` closure. When deployed the secret key should be read from a
+    // configuration file or environment variables.
+    let secret_key = Key::generate();
+    let state = state::AppState { pgpool };
 
     HttpServer::new(move || {
         App::new()
+            // Add session management using Redis for session state storage
+            .wrap(SessionMiddleware::new(
+                redis_store.clone(),
+                secret_key.clone(),
+            ))
             .app_data(web::Data::new(state.clone()))
             .configure(routes::configure)
             .service(

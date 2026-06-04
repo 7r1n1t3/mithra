@@ -7,9 +7,10 @@ services:
       - "8080:8080"
     environment:
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      REDIS_URL: "redis://localhost:6379"
 
   db:
-    image: postgres:17
+    image: postgres:17-alpine
     restart: always
     # set shared memory limit when using docker compose
     shm_size: 128mb
@@ -20,6 +21,10 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/db:/docker-entrypoint-initdb.d:ro
+
+  redis:
+    image: redis:8.8-alpine
+    restart: unless-stopped
 
 volumes:
   postgres_data:

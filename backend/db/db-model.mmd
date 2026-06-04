@@ -86,7 +86,7 @@ erDiagram
   SESSIONS {
     integer id PK
     integer user_id FK
-    text session_hash
+    bytea session_hash
     inet ip_address
     text user_agent
     timestamptz created_at
