@@ -1,9 +1,13 @@
+use std::net::IpAddr;
+use std::str::FromStr;
+
 use crate::dto::auth::{LoginAttempt, Session, SignInRequest, SignInResponse};
 use crate::services::auth::verify_credentials;
 use crate::state::AppState;
-use actix_session::Session as ActixSession;
 
-use actix_web::{HttpResponse, post, web};
+use actix_quick_extract::headers::UserAgent;
+use actix_session::Session as ActixSession;
+use actix_web::{HttpResponse, dev::ConnectionInfo, post, web};
 use chrono::{Duration, Utc};
 use sqlx::PgPool;
 
@@ -12,9 +16,20 @@ async fn post_signin(
     state: web::Data<AppState>,
     payload: web::Json<SignInRequest>,
     cache: ActixSession,
+    user_agent: UserAgent,
+    conn_info: ConnectionInfo,
 ) -> actix_web::Result<HttpResponse> {
     // TODO: check if session is registered, then return success
 
+    // No IP
+    if conn_info.peer_addr().is_none() || IpAddr::from_str(conn_info.peer_addr().unwrap()).is_err()
+    {
+        let failure_reason = String::from("IP not provided or is not valid. Who are you? Neo?");
+        return Ok(HttpResponse::Unauthorized().json(SignInResponse {
+            success: false,
+            failure_reason: failure_reason,
+        }));
+    }
     match verify_credentials(
         payload.email.as_str(),
         payload.password.as_str(),
@@ -23,19 +38,26 @@ async fn post_signin(
     .await
     {
         Err(_) => Err(actix_web::error::ErrorInternalServerError("Sign-in failed")),
+
+        // Not found
         Ok((-1, _)) => {
             let failure_reason = String::from("User not found.");
-            return Ok(HttpResponse::Unauthorized().json(SignInResponse {
+            return Ok(HttpResponse::NotFound().json(SignInResponse {
                 success: false,
-                failure_reason: failure_reason.to_owned(),
+                failure_reason: failure_reason,
             }));
         }
+        // False credentials
         Ok((user_id, false)) => {
             let failure_reason = String::from("Invalid email address or password");
             let login_attempt: LoginAttempt = LoginAttempt {
                 user_id: user_id,
-                ip_address: payload.ip_address,
-                user_agent: payload.user_agent.clone(),
+                // This should never fail: IP check was done before
+                ip_address: IpAddr::from_str(
+                    conn_info.peer_addr().expect("IP Address not provided."),
+                )
+                .expect("received IP is not valid"),
+                user_agent: user_agent.0,
                 success: false,
                 attempted_at: Utc::now(),
                 failure_reason: failure_reason.clone(),
@@ -48,11 +70,12 @@ async fn post_signin(
                 failure_reason: failure_reason,
             }));
         }
+        // Successful login
         Ok((user_id, true)) => {
             let login_attempt: LoginAttempt = LoginAttempt {
                 user_id: user_id,
                 ip_address: payload.ip_address,
-                user_agent: payload.user_agent.clone(),
+                user_agent: user_agent.0.clone(),
                 success: true,
                 attempted_at: Utc::now(),
                 failure_reason: String::new(),
@@ -66,7 +89,7 @@ async fn post_signin(
                     actix_web::error::ErrorInternalServerError("Failed to generate session hash")
                 })?,
                 ip_address: payload.ip_address,
-                user_agent: Some(payload.user_agent.clone()),
+                user_agent: Some(user_agent.0),
                 created_at: Utc::now(),
                 expires_at: Utc::now() + Duration::hours(24),
                 revoked_at: None,
