@@ -1,15 +1,18 @@
 use std::net::IpAddr;
 use std::str::FromStr;
 
-use crate::dto::auth::{LoginAttempt, Session, SignInRequest, SignInResponse};
-use crate::services::auth::verify_credentials;
-use crate::state::AppState;
-
 use actix_quick_extract::headers::UserAgent;
 use actix_session::Session as ActixSession;
 use actix_web::{HttpResponse, dev::ConnectionInfo, post, web};
 use chrono::{Duration, Utc};
+use log::{error, info};
 use sqlx::PgPool;
+
+use crate::dto::{
+    auth::{LoginAttempt, Session, SignInRequest, SignInResponse},
+    state::AppState,
+};
+use crate::services::auth::verify_credentials;
 
 #[post("/signin")]
 async fn post_signin(
@@ -24,6 +27,7 @@ async fn post_signin(
     // No IP
     if conn_info.peer_addr().is_none() || IpAddr::from_str(conn_info.peer_addr().unwrap()).is_err()
     {
+        error!("IP not provided or is not valid");
         let failure_reason = String::from("IP not provided or is not valid. Who are you? Neo?");
         return Ok(HttpResponse::Unauthorized().json(SignInResponse {
             success: false,
@@ -49,6 +53,7 @@ async fn post_signin(
         }
         // False credentials
         Ok((user_id, false)) => {
+            info!("failed login for user {}[{}]", payload.email, user_id);
             let failure_reason = String::from("Invalid email address or password");
             let login_attempt: LoginAttempt = LoginAttempt {
                 user_id: user_id,
@@ -72,6 +77,7 @@ async fn post_signin(
         }
         // Successful login
         Ok((user_id, true)) => {
+            info!("successful login for user {}[{}]", payload.email, user_id);
             let login_attempt: LoginAttempt = LoginAttempt {
                 user_id: user_id,
                 ip_address: payload.ip_address,

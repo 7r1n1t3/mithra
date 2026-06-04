@@ -1,12 +1,12 @@
 use actix_files::{Files, NamedFile};
 use actix_session::{SessionMiddleware, storage::RedisSessionStore};
-use actix_web::{App, HttpServer, cookie::Key, web};
+use actix_web::{App, HttpServer, cookie::Key, middleware::Logger, web};
+use log::info;
 use sqlx::postgres::PgPoolOptions;
 
 mod dto;
 mod routes;
 mod services;
-use crate::dto::state;
 
 async fn spa_index() -> actix_web::Result<NamedFile> {
     // svelte fallback page
@@ -31,10 +31,15 @@ async fn main() -> std::io::Result<()> {
     // `HttpServer::new` closure. When deployed the secret key should be read from a
     // configuration file or environment variables.
     let secret_key = Key::generate();
-    let state = state::AppState { pgpool };
+    let state = dto::state::AppState { pgpool };
 
+    // access logs are printed with the INFO level so ensure it is enabled by default
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+
+    info!("Starting HTTP server");
     HttpServer::new(move || {
         App::new()
+            .wrap(Logger::new("%t %a %{User-Agent} %r"))
             // Add session management using Redis for session state storage
             .wrap(SessionMiddleware::new(
                 redis_store.clone(),

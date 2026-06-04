@@ -1,14 +1,15 @@
-use crate::dto::auth::{RegisterRequest, RegisterResponse};
-use crate::services::password;
-use crate::state::AppState;
-
 use actix_web::{HttpResponse, error, post, web};
+use log::info;
 
+use crate::dto::auth::{RegisterRequest, RegisterResponse};
+use crate::dto::state::AppState;
+use crate::services::password;
 #[post("/register")]
 async fn post_register(
     state: web::Data<AppState>,
     payload: web::Json<RegisterRequest>,
 ) -> actix_web::Result<HttpResponse, actix_web::Error> {
+    // TODO: add payload validity checks
     let password_hash =
         password::hash_password(&payload.password).map_err(error::ErrorInternalServerError)?;
 
@@ -30,10 +31,11 @@ async fn post_register(
     .map_err(error::ErrorInternalServerError)?;
 
     if result.rows_affected() == 0 {
+        info!("user {} successfully registered", payload.email);
         return Ok(HttpResponse::Created().json(RegisterResponse {
             success: false,
             username: payload.username.clone(),
-            failure_reason: format!("{0} is already registered.", payload.username).to_string(),
+            failure_reason: format!("{} is already registered.", payload.username).to_string(),
         }));
     }
     Ok(HttpResponse::Created().json(RegisterResponse {
