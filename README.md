@@ -15,8 +15,8 @@
 
 # Installation
 
-~~copy the provided docker-compose.yml.example and .env.example from the repo and edit them accordingly then run~~
-Mithra is a work in progress and it is recommended to compile and build the application. See (here)[https://git.hlsec.top/7r1n1t3/mithra#Build].
+~~copy the provided docker-compose.yml.example and .env.example from the repo and edit them accordingly then run~~  
+Mithra is a work in progress and it is recommended to compile and build the application. See [here](https://git.hlsec.top/7r1n1t3/mithra#Build).
 
 # Build
 
