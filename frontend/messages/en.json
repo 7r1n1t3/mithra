@@ -1,0 +1,19 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+
+  "create_account": "Create account",
+
+  "passwords_do_not_match": "passwords do not match",
+  "password_minimum_8_characters": "password must have a minimum of 8 characters",
+  "invalid_email": "Email seems to be invalid",
+  "register_credentials_invalid": "Something seems wrong...",
+
+  "username": "Username",
+  "display_name": "Display name",
+  "email": "Email",
+  "password": "Password",
+  "confirm_password": "Confirm password",
+
+  "register": "register",
+  "signin": "signin"
+}

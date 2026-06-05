@@ -4,6 +4,7 @@
 	import Input from '$lib/Input.svelte';
 	import ErrorComp from '$lib/Error.svelte';
 	import Notice from '$lib/Notice.svelte';
+	import { m } from '$lib/paraglide/messages.js';
 
 	let register_button_pressed = $state(false);
 	let notice_message = $state('');
@@ -32,13 +33,13 @@
 
 	function check_arg_valid() {
 		if (!passwords_match) {
-			error_message = 'passwords do not match.';
+			error_message = m.passwords_do_not_match();
 		} else if (password !== '' && !valid_password) {
-			error_message = 'password must contain a minimum of 8 characters.';
+			error_message = m.password_minimum_8_characters();
 		} else if (!valid_email)  {
-			error_message = "are you sure that's an email?";
+			error_message = m.invalid_email();
 		} else if (!all_valid) {
-			error_message = "something seems wrong...";
+			error_message = m.register_credentials_invalid();
 		} else {
 			error_message = "";
 			return true;
@@ -83,17 +84,17 @@
 <div class="register">
 	<Box>
 		<Logo/>
-		<h1 class="title">Create account</h1>
+		<h1 class="title">{m.create_account()}</h1>
 		<form id="submit-form" class="submit-form">
-			<Input bind:value={username} name='Username'/>
-			<Input bind:value={display_name} name='Display name'/>
-			<Input bind:value={email} name='email' type='email'/>
-			<Input bind:value={password} name='password' type='Password'/>
-			<Input bind:value={confirm_password} name='confirm password' type='Password'/>
+			<Input bind:value={username} name={m.username()}/>
+			<Input bind:value={display_name} name={m.display_name()}/>
+			<Input bind:value={email} name={m.email()} type='email'/>
+			<Input bind:value={password} name={m.password()} type='Password'/>
+			<Input bind:value={confirm_password} name={m.confirm_password()} type='Password'/>
 
 			<div class="sign-buttons">
-				<button type="submit" onclick={register_user}>Register</button>
-				<a href="/signin">sign in</a>
+				<button type="submit" onclick={register_user}>{m.register()}</button>
+				<a href="/signin">{m.signin()}</a>
 			</div>
 		</form>
 

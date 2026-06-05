@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@inlang/paraglide-js": "^2.15.2",
     "@sveltejs/adapter-static": "^3.0.10",
     "@sveltejs/kit": "^2.61.1",
     "svelte": "^5.55.5",
