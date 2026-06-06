@@ -22,6 +22,8 @@ async fn post_signin(
 ) -> actix_web::Result<HttpResponse> {
     // TODO: check if session is registered, then return success
     let ip_address = peer_addr.0.ip();
+    let attempted_at: chrono::DateTime<Utc> = Utc::now();
+    let expires_at: chrono::DateTime<Utc> = attempted_at + Duration::hours(24);
 
     match verify_credentials(
         payload.email_address.as_str(),
@@ -57,7 +59,7 @@ async fn post_signin(
                     ip_address,
                     user_agent: Some(user_agent.0),
                     success: false,
-                    attempted_at: Utc::now(),
+                    attempted_at,
                     failure_reason: failure_reason.clone(),
                 },
             )
@@ -83,7 +85,7 @@ async fn post_signin(
                     ip_address,
                     user_agent: Some(user_agent.0.clone()),
                     success: true,
-                    attempted_at: Utc::now(),
+                    attempted_at,
                     failure_reason: String::new(),
                 },
             )
@@ -99,8 +101,8 @@ async fn post_signin(
                     })?,
                     ip_address,
                     user_agent: Some(user_agent.0),
-                    created_at: Utc::now(),
-                    expires_at: Utc::now() + Duration::hours(24),
+                    created_at: attempted_at,
+                    expires_at,
                     revoked_at: None,
                 },
             )
