@@ -15,6 +15,9 @@ async fn spa_index() -> actix_web::Result<NamedFile> {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    // access logs are printed with the INFO level so ensure it is enabled by default
+    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
+
     // Postgres
     let postgres_url =
         std::env::var("DATABASE_URL").expect("DATABASE_URL environment variable must be set");
@@ -32,9 +35,6 @@ async fn main() -> std::io::Result<()> {
     // configuration file or environment variables.
     let secret_key = Key::generate();
     let state = dto::state::AppState { pgpool };
-
-    // access logs are printed with the INFO level so ensure it is enabled by default
-    env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
 
     info!("Starting HTTP server");
     HttpServer::new(move || {
