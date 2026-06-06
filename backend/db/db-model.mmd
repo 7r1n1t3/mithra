@@ -23,7 +23,7 @@ erDiagram
     enum sha512
   }
 
-  hash_algorithm {
+  password_hash_algorithm {
     enum argon2
     enum argon2i
     enum argon2id
@@ -40,7 +40,7 @@ erDiagram
     boolean email_address_verified
     boolean locked
     text password_hash
-    hash_algorithm password_hash_algorithm
+    password_hash_algorithm password_hash_algorithm
     user_status status
     user_role user_role
     timestamptz created_at

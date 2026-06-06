@@ -21,7 +21,7 @@ CREATE TYPE totp_algorithm AS ENUM (
     'SHA512'
 );
 
-CREATE TYPE hash_algorithm AS ENUM (
+CREATE TYPE password_hash_algorithm AS ENUM (
     'argon2',
     'argon2i',
     'argon2d',
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS users (
     email_address text UNIQUE NOT NULL,
     email_address_verified boolean DEFAULT FALSE,
     password_hash text, -- nullable for future OpenID support
-    password_hash_algorithm hash_algorithm,
+    password_hash_algorithm password_hash_algorithm,
     status user_status DEFAULT 'active',
     user_role user_role DEFAULT 'user',
     created_at timestamptz DEFAULT now(),
