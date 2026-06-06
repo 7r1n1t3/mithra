@@ -15,5 +15,7 @@
   "confirm_password": "Confirm password",
 
   "register": "register",
-  "signin": "signin"
+  "signin": "signin",
+
+  "successful_signin": "Succesfully signed in"
 }

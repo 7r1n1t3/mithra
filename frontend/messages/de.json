@@ -15,5 +15,7 @@
   "confirm_password": "Kennwort bestätigen",
 
   "register": "Konto erstellen",
-  "signin": "sich einloggen"
+  "signin": "sich einloggen",
+
+  "successful_signin": "Login erfolgreich"
 }

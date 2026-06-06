@@ -4,6 +4,7 @@
 	import Input from  '$lib/Input.svelte';
 	import ErrorComp from '$lib/Error.svelte';
 	import Notice from '$lib/Notice.svelte';
+	import { m } from '$lib/paraglide/messages.js';
 
 	let error_message = $state('');
 	let notice_message = $state('');
@@ -15,7 +16,7 @@
 
 	function check_arg_valid() {
 		if (!valid_email)  {
-			error_message = "are you sure that's an email?";
+			error_message = m.invalid_email();
 		} else {
 			error_message = "";
 			return true;
@@ -45,7 +46,7 @@
 		}
 
 		if (body.success === true) {
-			notice_message = `Succesfully registered`;
+			notice_message = m.successful_signin();
 		} else {
 			error_message = body.failure_reason ??
 				`Internal server error: ${body.failure_reason}`;
@@ -56,14 +57,14 @@
 <div class="signin">
 	<Box>
 		<Logo/>
-		<h1 class="title">Sign-in</h1>
+		<h1 class="title">{m.signin()}</h1>
 		<form id="signin-form">
-			<Input bind:value={email_address} name='email' type='email'/>
-			<Input bind:value={password} name='password' type='Password'/>
+			<Input bind:value={email_address} name={m.email()} type='email'/>
+			<Input bind:value={password} name={m.password()} type='Password'/>
 		</form>
 		<div class="sign-buttons">
-			<button type="submit" onclick={signin}>sign-in</button>
-			<a href="/register">register</a>
+			<button type="submit" onclick={signin}>{m.signin()}</button>
+			<a href="/register">{m.register()}</a>
 		</div>
 
 		{#if error_message !== ''}

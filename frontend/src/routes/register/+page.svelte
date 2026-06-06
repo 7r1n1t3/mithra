@@ -88,7 +88,7 @@
 		<form id="submit-form" class="submit-form">
 			<Input bind:value={username} name={m.username()}/>
 			<Input bind:value={display_name} name={m.display_name()}/>
-			<Input bind:value={email} name={m.email()} type='email'/>
+			<Input bind:value={email_address} name={m.email()} type='email'/>
 			<Input bind:value={password} name={m.password()} type='Password'/>
 			<Input bind:value={confirm_password} name={m.confirm_password()} type='Password'/>
 
