@@ -12,14 +12,14 @@
 
 	let username = $state('');
 	let display_name = $state('');
-	let email = $state('');
+	let email_address = $state('');
 	let password = $state('');
 	let confirm_password = $state('');
 
 	let valid_username = $derived(username.trim().length > 0);
 	let valid_display_name = $derived(display_name.trim().length > 0);
 	let valid_email_pattern = /^\S+@\S+\.\S+$/ ;
-	let valid_email = $derived(valid_email_pattern.test(email));
+	let valid_email = $derived(valid_email_pattern.test(email_address));
 	let valid_password = $derived(password.length >= 8);
 	let passwords_match = $derived(password === confirm_password);
 
@@ -61,7 +61,7 @@
 		  body: JSON.stringify({
 			  username: username,
 			  display_name: display_name,
-			  email: email,
+			  email_address: email_address,
 			  password: password
 		  })
 		});

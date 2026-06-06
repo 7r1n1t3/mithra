@@ -14,7 +14,6 @@ pub struct RegisterRequest {
 pub struct SignInRequest {
     pub email_address: String,
     pub password: String,
-    pub ip_address: IpAddr,
 }
 
 #[derive(Debug, Serialize)]
