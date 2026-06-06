@@ -4,9 +4,9 @@ use actix_web::{App, HttpServer, cookie::Key, middleware::Logger, web};
 use log::info;
 use sqlx::postgres::PgPoolOptions;
 
-mod dto;
 mod routes;
 mod services;
+mod structs;
 
 async fn spa_index() -> actix_web::Result<NamedFile> {
     // svelte fallback page
@@ -34,7 +34,7 @@ async fn main() -> std::io::Result<()> {
     // `HttpServer::new` closure. When deployed the secret key should be read from a
     // configuration file or environment variables.
     let secret_key = Key::generate();
-    let state = dto::state::AppState { pgpool };
+    let state = structs::state::AppState { pgpool };
 
     info!("Starting HTTP server");
     HttpServer::new(move || {

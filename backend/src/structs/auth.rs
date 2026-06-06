@@ -6,13 +6,13 @@ use std::net::IpAddr;
 pub struct RegisterRequest {
     pub username: String,
     pub display_name: String,
-    pub email: String,
+    pub email_address: String,
     pub password: String,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct SignInRequest {
-    pub email: String,
+    pub email_address: String,
     pub password: String,
     pub ip_address: IpAddr,
 }
@@ -20,7 +20,6 @@ pub struct SignInRequest {
 #[derive(Debug, Serialize)]
 pub struct RegisterResponse {
     pub success: bool,
-    pub username: String,
     pub failure_reason: String,
 }
 
@@ -45,13 +44,24 @@ pub struct Session {
 pub struct LoginAttempt {
     pub user_id: i32,
     pub ip_address: IpAddr,
-    pub user_agent: String,
+    pub user_agent: Option<String>,
     pub success: bool,
     pub attempted_at: DateTime<Utc>,
     pub failure_reason: String,
 }
 
-#[derive(Debug, Clone, Copy, sqlx::Type)]
+#[derive(Debug, Serialize)]
+pub struct User {
+    pub id: i32,
+    pub username: String,
+    pub display_name: String,
+    pub email_address: String,
+    pub password_hash: String,
+    pub password_hash_algorithm: PasswordHashAlgorithm,
+    pub user_role: UserRole,
+}
+
+#[derive(Debug, Clone, Copy, sqlx::Type, Serialize)]
 #[sqlx(type_name = "hash_algorithm", rename_all = "snake_case")]
 pub enum PasswordHashAlgorithm {
     Argon2,
@@ -62,14 +72,14 @@ pub enum PasswordHashAlgorithm {
     Bcrypt,
 }
 
-#[derive(Debug, Clone, Copy, sqlx::Type)]
+#[derive(Debug, Clone, Copy, sqlx::Type, Serialize)]
 #[sqlx(type_name = "user_status", rename_all = "snake_case")]
 pub enum UserStatus {
     Active,
     Locked,
 }
 
-#[derive(Debug, Clone, Copy, sqlx::Type)]
+#[derive(Debug, Clone, Copy, sqlx::Type, Serialize)]
 #[sqlx(type_name = "user_role", rename_all = "snake_case")]
 pub enum UserRole {
     Owner,
@@ -77,7 +87,7 @@ pub enum UserRole {
     User,
 }
 
-#[derive(Debug, Clone, Copy, sqlx::Type)]
+#[derive(Debug, Clone, Copy, sqlx::Type, Serialize)]
 #[sqlx(type_name = "event_type", rename_all = "snake_case")]
 pub enum EventType {
     LoginSuccess,
@@ -85,7 +95,7 @@ pub enum EventType {
     AccountLocked,
 }
 
-#[derive(Debug, Clone, Copy, sqlx::Type)]
+#[derive(Debug, Clone, Copy, sqlx::Type, Serialize)]
 #[sqlx(type_name = "totp_algorithm", rename_all = "snake_case")]
 pub enum TotpAlgortihm {
     SHA1,
