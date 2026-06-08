@@ -1,11 +1,8 @@
 <script>
-	let { width="50%", height="30%", children } = $props();
+	let { width = "50%", height = "30%", children } = $props();
 </script>
 
-<div class="box"
-style:width={width}
-style:height={height}
->
+<div class="box" style:width style:height>
 	{@render children?.()}
 </div>
 

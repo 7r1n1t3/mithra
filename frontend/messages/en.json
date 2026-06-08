@@ -14,8 +14,12 @@
   "password": "Password",
   "confirm_password": "Confirm password",
 
-  "register": "register",
+  "register_user": "register",
   "signin": "signin",
 
-  "successful_signin": "Succesfully signed in"
+  "successful_signin": "Succesfully signed in",
+
+  "label": "label",
+  "secret": "secret",
+  "register_code": "create code"
 }

@@ -1,9 +1,22 @@
 <script>
-	let { value = $bindable(''), name, type='text', required=true } = $props();
+	let {
+		value = $bindable(""),
+		name,
+		type = "text",
+		required = true,
+	} = $props();
 </script>
 
 <main>
-	<input bind:value={value} id={name} placeholder={name} class="input-field" {name} {type} {required} />
+	<input
+		bind:value
+		id={name}
+		placeholder={name}
+		class="input-field"
+		{name}
+		{type}
+		{required}
+	/>
 </main>
 
 <style>

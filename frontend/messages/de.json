@@ -17,5 +17,9 @@
   "register": "Konto erstellen",
   "signin": "sich einloggen",
 
-  "successful_signin": "Login erfolgreich"
+  "successful_signin": "Login erfolgreich",
+
+  "label": "Name",
+  "secret": "Schlüssel",
+  "register_code": "Code registrieren"
 }

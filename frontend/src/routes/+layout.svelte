@@ -1,12 +1,12 @@
 <script>
-	import { resolve } from '$app/paths';
-	import { page } from '$app/state';
-	import { locales, localizeHref } from '$lib/paraglide/runtime';
-	import { setLocale } from '$lib/paraglide/runtime';
+	import { resolve } from "$app/paths";
+	import { page } from "$app/state";
+	import { locales, localizeHref } from "$lib/paraglide/runtime";
+	import { setLocale } from "$lib/paraglide/runtime";
 
 	let { children } = $props();
 
-	let locale = $state('en');
+	let locale = $state("en");
 </script>
 
 {@render children()}
@@ -21,21 +21,25 @@
 	</a>
 </div>
 <div class="right-footer">
-	
-	<select name="locale" id="locale" bind:value={locale} onchange={() => setLocale(locale)}>
-	  <option value="en">English</option>
-	  <option value="de">German</option>
-	  <option value="fr">French</option>
-	  <option value="ar">Arabic</option>
-	  <option value="ja">Japanese</option>
+	<select
+		name="locale"
+		id="locale"
+		bind:value={locale}
+		onchange={() => setLocale(locale)}
+	>
+		<option value="en">English</option>
+		<option value="de">German</option>
+		<option value="fr">French</option>
+		<option value="ar">Arabic</option>
+		<option value="ja">Japanese</option>
 	</select>
 </div>
 
 <div style="display:none">
 	{#each locales as locale (locale)}
-		<a
-			href={resolve(localizeHref(page.url.pathname, { locale }))}
-		>{locale}</a>
+		<a href={resolve(localizeHref(page.url.pathname, { locale }))}
+			>{locale}</a
+		>
 	{/each}
 </div>
 

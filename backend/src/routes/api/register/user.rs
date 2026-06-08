@@ -12,8 +12,8 @@ use crate::structs::{
     state::AppState,
 };
 
-#[post("/register")]
-async fn post_register(
+#[post("/user")]
+async fn post_user(
     state: web::Data<AppState>,
     payload: web::Json<RegisterRequest>,
     cache: ActixSession,
