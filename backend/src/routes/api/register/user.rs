@@ -3,14 +3,15 @@ use actix_session::Session as ActixSession;
 use actix_web::{HttpResponse, dev::PeerAddr, error::ErrorInternalServerError, post, web};
 use chrono::{Duration, Utc};
 
+use crate::auth::{
+    dto::{RegisterRequest, RegisterResponse},
+    models::{ID, PasswordHashAlgorithm, Session, User, UserRole},
+};
 use crate::services::{
     auth::{generate_session_hash, get_number_users, register_session, register_user},
     password,
 };
-use crate::structs::{
-    auth::{PasswordHashAlgorithm, RegisterRequest, RegisterResponse, Session, User, UserRole},
-    state::AppState,
-};
+use crate::state::AppState;
 
 #[post("/user")]
 async fn post_user(
@@ -39,7 +40,7 @@ async fn post_user(
     let created_at: chrono::DateTime<Utc> = Utc::now();
 
     // User creation
-    let user_id: i32 = register_user(
+    let user_id: ID = register_user(
         &state.pgpool,
         &User {
             id: -1,

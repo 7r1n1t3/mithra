@@ -7,8 +7,11 @@ use chrono::{Duration, Utc};
 use crate::services::auth::{
     generate_session_hash, register_session, store_login_attempt, verify_credentials,
 };
-use crate::structs::{
-    auth::{LoginAttempt, Session, SignInRequest, SignInResponse},
+use crate::{
+    auth::{
+        dto::{SignInRequest, SignInResponse},
+        models::{LoginAttempt, Session},
+    },
     state::AppState,
 };
 

@@ -1,13 +1,14 @@
 use actix_files::{Files, NamedFile};
 use actix_session::{SessionMiddleware, storage::RedisSessionStore};
-use actix_web::{App, HttpServer, cookie::Key, http::header::REFERER, middleware::Logger, web};
+use actix_web::{App, HttpServer, cookie::Key, middleware::Logger, web};
 use base64::{Engine as _, engine::general_purpose::STANDARD};
 use log::info;
 use sqlx::postgres::PgPoolOptions;
 
+mod auth;
 mod routes;
 mod services;
-mod structs;
+mod state;
 
 async fn spa_index() -> actix_web::Result<NamedFile> {
     // svelte fallback page
@@ -46,7 +47,7 @@ async fn main() -> std::io::Result<()> {
     // `HttpServer::new` closure. When deployed the secret key should be read from a
     // configuration file or environment variables.
     let secret_key: Key = load_session_key();
-    let state = structs::state::AppState { pgpool };
+    let state = state::AppState { pgpool };
 
     info!("Starting HTTP server");
     HttpServer::new(move || {

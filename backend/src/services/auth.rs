@@ -1,18 +1,18 @@
 use actix_session::Session as ActixSession;
 use sqlx::PgPool;
 
-use crate::services::password;
-use crate::structs::{
-    auth::{LoginAttempt, Session, User},
+use crate::auth::{
     error::DatabaseError,
+    models::{ID, LoginAttempt, Session, User},
 };
+use crate::services::password;
 
 pub async fn verify_credentials(
     email: &str,
     password: &str,
     pool: &PgPool,
-) -> Result<(i32, bool), sqlx::Error> {
-    let user: Option<(i32, String)> = sqlx::query_as(
+) -> Result<(ID, bool), sqlx::Error> {
+    let user: Option<(ID, String)> = sqlx::query_as(
         r#"SELECT id, password_hash
         FROM users
         WHERE email_address=$1"#,
@@ -38,8 +38,8 @@ pub fn generate_session_hash() -> Result<Vec<u8>, getrandom::Error> {
     Ok(session_hash)
 }
 
-pub async fn register_user(pool: &PgPool, user: &User) -> Result<i32, DatabaseError> {
-    let user_id: i32 = sqlx::query_scalar(
+pub async fn register_user(pool: &PgPool, user: &User) -> Result<ID, DatabaseError> {
+    let user_id: ID = sqlx::query_scalar(
         r#"
         INSERT INTO users
         (username, display_name, email_address, password_hash, password_hash_algorithm, user_role)

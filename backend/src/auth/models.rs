@@ -2,35 +2,11 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::net::IpAddr;
 
-#[derive(Debug, Deserialize)]
-pub struct RegisterRequest {
-    pub username: String,
-    pub display_name: String,
-    pub email_address: String,
-    pub password: String,
-}
+pub type ID = i32;
 
-#[derive(Debug, Deserialize)]
-pub struct SignInRequest {
-    pub email_address: String,
-    pub password: String,
-}
-
-#[derive(Debug, Serialize)]
-pub struct RegisterResponse {
-    pub success: bool,
-    pub failure_reason: String,
-}
-
-#[derive(Debug, Serialize)]
-pub struct SignInResponse {
-    pub success: bool,
-    pub failure_reason: String,
-}
-
-#[derive(Debug, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Session {
-    pub user_id: i32,
+    pub user_id: ID,
     pub session_hash: Vec<u8>,
     pub ip_address: IpAddr,
     pub user_agent: Option<String>,
@@ -41,7 +17,7 @@ pub struct Session {
 
 #[derive(Debug, Serialize)]
 pub struct LoginAttempt {
-    pub user_id: i32,
+    pub user_id: ID,
     pub ip_address: IpAddr,
     pub user_agent: Option<String>,
     pub success: bool,
@@ -51,7 +27,7 @@ pub struct LoginAttempt {
 
 #[derive(Debug, Serialize)]
 pub struct User {
-    pub id: i32,
+    pub id: ID,
     pub username: String,
     pub display_name: String,
     pub email_address: String,
@@ -61,7 +37,7 @@ pub struct User {
 }
 
 #[derive(Debug, Clone, Copy, sqlx::Type, Serialize)]
-#[sqlx(type_name = "hash_algorithm", rename_all = "snake_case")]
+#[sqlx(type_name = "password_hash_algorithm", rename_all = "snake_case")]
 pub enum PasswordHashAlgorithm {
     Argon2,
     Argon2i,
