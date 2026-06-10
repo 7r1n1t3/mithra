@@ -1,6 +1,6 @@
 use actix_files::{Files, NamedFile};
 use actix_session::{SessionMiddleware, storage::RedisSessionStore};
-use actix_web::{App, HttpServer, cookie::Key, middleware::Logger, web};
+use actix_web::{App, HttpServer, cookie::Key, http::header::REFERER, middleware::Logger, web};
 use base64::{Engine as _, engine::general_purpose::STANDARD};
 use log::info;
 use sqlx::postgres::PgPoolOptions;
@@ -51,7 +51,9 @@ async fn main() -> std::io::Result<()> {
     info!("Starting HTTP server");
     HttpServer::new(move || {
         App::new()
-            .wrap(Logger::new("%t %a %{User-Agent} %r").exclude_regex(r"^/_app(?:/|$)"))
+            .wrap(
+                Logger::new("%t %a %{REFERER}i %{User-Agent}i %r").exclude_regex(r"^/_app(?:/|$)"),
+            )
             // Add session management using Redis for session state storage
             .wrap(SessionMiddleware::new(
                 redis_store.clone(),
