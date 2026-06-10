@@ -5,7 +5,6 @@
   <i>self-hosted TOTP vault</i>
 </p>
 
-
 Mithra is still very early in development; Contributions are welcome!
 
 ---
@@ -23,6 +22,12 @@ Mithra is a work in progress and it is recommended to compile and build the appl
 
 # Build
 
+## Session key
+
+```bash
+# generate a random 64-bit secret then set SECRET_KEY to it
+openssl rand -base64 64
+```
 
 ```bash
 cp .env.example .env # then set environment variables accordingly in .env

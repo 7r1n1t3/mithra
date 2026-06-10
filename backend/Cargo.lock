@@ -1662,6 +1662,7 @@ dependencies = [
  "actix-session",
  "actix-web",
  "argon2",
+ "base64 0.22.1",
  "chrono",
  "cookie",
  "env_logger",
