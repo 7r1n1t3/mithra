@@ -1,0 +1,37 @@
+name: Add GitHub mirror notice
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  add-notice:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add GitHub mirror notice to README
+        run: |
+          NOTICE="> This GitHub repository is a mirror. Please refer to [forgejo repo](https://git.hlsec.top/7r1n1t3/mithra)."
+
+          if [ -f README.md ] && ! grep -Fxq "$NOTICE" README.md; then
+            printf "%s\n\n" "$NOTICE" | cat - README.md > README.tmp
+            mv README.tmp README.md
+          fi
+
+      - name: Commit change
+        run: |
+          if git diff --quiet; then
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "docs: GitHub mirror notice"
+          git push
