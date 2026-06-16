@@ -9,8 +9,16 @@ branch_whitelist = []
 pre = "alpha.*"
 skip_ci = "[skip ci]"
 skip_untracked = false
-pre_bump_hooks = []
-post_bump_hooks = []
+pre_bump_hooks = [
+  "echo 'bumping from {{latest|0.0.0}} to {{version|0.0.1}}'",
+  "pushd frontend && npm version {{version|0.0.1}} && popd",
+  "pushd backend && cargo bump {{version|0.0.1}} && popd",
+]
+post_bump_hooks = [
+  "git push",
+  "git push origin {{version}}",
+  "pushd backend && cargo publish && popd",
+]
 pre_package_bump_hooks = []
 post_package_bump_hooks = []
 
@@ -20,6 +28,10 @@ post_package_bump_hooks = []
 
 [changelog]
 path = "CHANGELOG.md"
-authors = []
+owner = "Rayen Daadaa"
+remote = "git.hlsec.top"
+repository = "mithra"
+
+authors = [{ signature = "Rayen Daadaa", username = "7r1n1t3" }]
 
 [bump_profiles]
