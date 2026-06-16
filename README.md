@@ -5,7 +5,8 @@
   <i>self-hosted TOTP vault</i>
 </p>
 
-Mithra is still very early in development; Contributions are welcome!
+Mithra is still very early in development; Contributions are welcome!  
+*If you need an account for contribution purposes just email me <7r1n1t3@hlsec.top>*
 
 ---
 
