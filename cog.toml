@@ -4,21 +4,17 @@ ignore_fixup_commits = false
 disable_changelog = false
 disable_bump_commit = false
 generate_mono_repository_global_tag = true
-generate_mono_repository_package_tags = true
+generate_mono_repository_package_tags = false
 branch_whitelist = []
 pre = "alpha.*"
 skip_ci = "[skip ci]"
 skip_untracked = false
 pre_bump_hooks = [
   "echo 'bumping from {{latest|0.0.0}} to {{version|0.0.1}}'",
-  "pushd frontend && npm version {{version|0.0.1}} && popd",
+  "pushd frontend && npm version {{version|0.0.1}} --no-git-tag-version && popd",
   "pushd backend && cargo bump {{version|0.0.1}} && popd",
 ]
-post_bump_hooks = [
-  "git push",
-  "git push origin {{version}}",
-  "pushd backend && cargo publish && popd",
-]
+post_bump_hooks = ["git push", "git push origin {{version}}"]
 pre_package_bump_hooks = []
 post_package_bump_hooks = []
 
