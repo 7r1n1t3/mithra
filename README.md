@@ -1,3 +1,5 @@
+> This GitHub repository is a mirror. Please refer to [forgejo repo](https://git.hlsec.top/7r1n1t3/mithra).
+
 <p align="center">
   <img src="frontend/static/full_white.svg" alt="Logo" height=100>
   <br/>
