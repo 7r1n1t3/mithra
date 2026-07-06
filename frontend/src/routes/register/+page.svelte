@@ -74,7 +74,7 @@
 		}
 
 		if (body.success === true) {
-			notice_message = `User ${body.username ?? username} succesfully created.`;
+			notice_message = `User ${body.username ?? username} successfully created.`;
 		} else {
 			error_message =
 				body.failure_reason ??

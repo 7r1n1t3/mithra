@@ -72,7 +72,7 @@ pub enum EventType {
 
 #[derive(Debug, Clone, Copy, sqlx::Type, Serialize)]
 #[sqlx(type_name = "totp_algorithm", rename_all = "snake_case")]
-pub enum TotpAlgortihm {
+pub enum TotpAlgorithm {
     SHA1,
     SHA256,
     SHA512,
