@@ -1,9 +1,13 @@
 # Changelog
+
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+
 ## 0.1.0 - 2026-06-16
-#### Features
+
+### Features
+
 - (**actix**) AuthedUser type and better file structure for structs - (c4238ae) - 7r1n1t3
 - (**actix**) SESSION_KEY generation and storing in env - (b055dad) - 7r1n1t3
 - (**actix**) see desc. - (84722b0) - 7r1n1t3
@@ -25,7 +29,9 @@ All notable changes to this project will be documented in this file. See [conven
 - (**svelte**) improve register and signin design - (1d5315d) - *7r1n1t3*
 - (**svelte**) use SvelteKit - (95191f5) - *7r1n1t3*
 - (**svelte**) register with svelte - (4f0dbdf) - *7r1n1t3*
+
 #### Bug Fixes
+
 - (**actix**) include user-agent and referer in Logger format - (7d7bfc7) - 7r1n1t3
 - (**actix**) calculate Utc::now() only once for constistency - (5794ac8) - 7r1n1t3
 - (**actix**) store to database using enums - (ae6685b) - 7r1n1t3
@@ -38,7 +44,9 @@ All notable changes to this project will be documented in this file. See [conven
 - (**redis**) fix REDIS_URL - (d3fe545) - 7r1n1t3
 - (**svelte**) localisation for signin page - (f784fab) - 7r1n1t3
 - (**svelte**) change svg text to path - (2b81242) - *7r1n1t3*
+
 #### Documentation
+
 - remove old changelog - (bd1dd54) - 7r1n1t3
 - update path of files in License - (941c576) - 7r1n1t3
 - Update README.md - (30f7418) - 7r1n1t3
@@ -53,7 +61,9 @@ All notable changes to this project will be documented in this file. See [conven
 - set license - (a9aef0e) - *7r1n1t3*
 - rebrand - (cb89a69) - 7r1n1t3
 - initial commit - (c5b8a33) - *7r1n1t3*
+
 #### Continuous Integration
+
 - cog settings - (a5a9267) - 7r1n1t3
 - cog pre and post hooks - (1c04ff9) - 7r1n1t3
 - remove official docker hub images - (2371869) - 7r1n1t3
@@ -62,9 +72,13 @@ All notable changes to this project will be documented in this file. See [conven
 - optimize docker build to avoid recompiling dependencies - (5f82c87) - *7r1n1t3*
 - remove usage of static/ folder - (d4baa92) - 7r1n1t3
 - .vscode/extensions.json - (6ef0ddc) - *7r1n1t3*
+
 #### Refactoring
+
 - (**actix**) modular structure - (a0da1ed) - *7r1n1t3*
+
 #### Style
+
 - use pgformatter - (80531d2) - *7r1n1t3*
 
 - - -

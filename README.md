@@ -5,20 +5,19 @@
   <i>self-hosted TOTP vault</i>
 </p>
 
-Mithra is still very early in development; Contributions are welcome!  
+Mithra is still early in development, contributions are welcome!
 
 ---
 
 # Features
 
-- Speed and modern architecture (using SvelteKit, Actix and Redis)
+- Speed and modern architecture: using SvelteKit, Actix and Redis
 - Encryption
-- Localisation (currently supporting 5 languages)
+- Localisation: currently supporting 5 languages
 
 # Installation
 
-~~copy the provided docker-compose.yml.example and .env.example from the repo and edit them accordingly then run~~  
-Mithra is a work in progress and it is recommended to compile and build the application. Please follow the [Build](https://git.hlsec.top/7r1n1t3/mithra#Build) section.
+Mithra is a work in progress and it's recommended to compile and build the app. Please follow the [Build](https://git.hlsec.top/7r1n1t3/mithra#Build) section.
 
 # Build
 

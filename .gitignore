@@ -16,5 +16,8 @@ frontend/build/
 # Contains mutation testing data
 **/mutants.out*/
 
-# docker
+# ---> docker
 .env
+
+# ---> rumdl
+.rumdl.toml

@@ -14,7 +14,11 @@ pre_bump_hooks = [
   "pushd frontend && npm version {{version|0.0.1}} --no-git-tag-version && popd",
   "pushd backend && cargo bump {{version|0.0.1}} && popd",
 ]
-post_bump_hooks = ["git push", "git push origin {{version}}"]
+post_bump_hooks = [
+  "git push",
+  "git push origin {{version}}",
+  "rumdl fmt CHANGELOG.md",
+]
 pre_package_bump_hooks = []
 post_package_bump_hooks = []
 
