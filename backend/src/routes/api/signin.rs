@@ -37,14 +37,6 @@ async fn post_signin(
     {
         Err(_) => Err(actix_web::error::ErrorInternalServerError("Sign-in failed")),
 
-        // Not found
-        Ok((-1, _)) => {
-            let failure_reason = String::from("User not found.");
-            return Ok(HttpResponse::NotFound().json(SignInResponse {
-                success: false,
-                failure_reason: failure_reason,
-            }));
-        }
         // False credentials
         Ok((user_id, false)) => {
             log::info!(
@@ -68,10 +60,10 @@ async fn post_signin(
             )
             .await;
 
-            return Ok(HttpResponse::Unauthorized().json(SignInResponse {
+            Ok(HttpResponse::Unauthorized().json(SignInResponse {
                 success: false,
-                failure_reason: failure_reason,
-            }));
+                failure_reason,
+            }))
         }
         // Successful login
         Ok((user_id, true)) => {
@@ -115,10 +107,10 @@ async fn post_signin(
                 error::ErrorInternalServerError("failed to create session")
             })?;
 
-            return Ok(HttpResponse::Ok().json(SignInResponse {
+            Ok(HttpResponse::Ok().json(SignInResponse {
                 success: true,
                 failure_reason: String::new(),
-            }));
+            }))
         }
     }
 }
