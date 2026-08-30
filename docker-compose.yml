@@ -1,8 +1,12 @@
 services:
   app:
     build: .
+    restart: unless-stopped
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     ports:
       - "8080:8080"
     environment:
@@ -21,11 +25,29 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      # -q and the explicit db/user avoid a false ready during the entrypoint's
+      # temporary bootstrap server, which listens on the socket only
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -q -h 127.0.0.1 -d $$POSTGRES_DB -U $$POSTGRES_USER",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
 
   redis:
     image: redis:8.8-alpine
     command: [sh, -c, "rm -f /data/dump.rdb && redis-server"] # disable persistence
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 10s
 
 volumes:
   postgres_data:
