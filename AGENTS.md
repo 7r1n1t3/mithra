@@ -136,9 +136,9 @@ auth migration, not the live auth path. The live auth path is the Actix backend 
 
 ## Conventions
 
-- Commits follow Conventional Commits, enforced/documented in `CONTRIBUTING.md`
-  (`<type>(<scope>): <subject>`, imperative present tense, no capital/period on the subject,
-  lines ≤80 chars). Types: build, ci, docs, feat, fix, perf, refactor, style, test.
+- Commits follow Conventional Commits:
+  `<type>(<scope>): <subject>`, imperative, no capital/period, lines ≤80 chars. Types:
+  build, ci, docs, feat, fix, perf, refactor, style, test.
 - Versioning/changelog is automated with `cocogitto` (`cog.toml`): bumping updates
   `frontend/package.json` and `backend/Cargo.toml` (via `cargo bump`) together and regenerates
   `CHANGELOG.md` — don't hand-edit versions in those two files independently of a `cog bump`.
