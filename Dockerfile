@@ -1,12 +1,12 @@
 # frontend build
-FROM node:22-alpine AS frontend
+FROM oven/bun:1-alpine AS frontend
 
 WORKDIR /frontend
 COPY frontend/package.json frontend/bun.lock ./
-RUN npm ci
+RUN bun install --frozen-lockfile --ignore-scripts
 
 COPY frontend/ ./
-RUN npm run build
+RUN bun run build
 
 # rust build
 FROM rust:1-bookworm AS backend

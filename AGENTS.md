@@ -65,7 +65,8 @@ mirrored 1:1 by `#[derive(sqlx::Type)]` enums in `auth/models.rs`, each tagged w
 
 ### Frontend (`frontend/`, SvelteKit)
 
-Local dev uses `bun` (see `bun.lock`); the Docker build uses `npm ci`/`npm run build`.
+Both local dev and the Docker build use `bun` (see `bun.lock`); the image's frontend stage
+runs `bun install --frozen-lockfile --ignore-scripts` then `bun run build`.
 
 ```bash
 bun install
