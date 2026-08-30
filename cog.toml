@@ -17,7 +17,6 @@ pre_bump_hooks = [
 post_bump_hooks = [
   "git push",
   "git push origin {{version}}",
-  "rumdl fmt CHANGELOG.md",
 ]
 pre_package_bump_hooks = []
 post_package_bump_hooks = []
