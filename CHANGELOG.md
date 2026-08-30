@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## 0.1.1 - 2026-08-30
+#### Features
+- (**db**) run diesel migrations on startup - (ae7d469) - 7r1n1t3
+#### Documentation
+- formatting and language - (b36be35) - 7r1n1t3
+- update README.md - (e8379d7) - 7r1n1t3
+- add contributing and fix typos - (ff8f1b6) - 7r1n1t3
+- add registration per email - (6eb6a4b) - 7r1n1t3
+#### Continuous Integration
+- add github mirror notice action - (ce571e5) - 7r1n1t3
+#### Miscellaneous Chores
+- disable changelog formating - (b785fa0) - 7r1n1t3
+- remove mermaid database diagramm - (0421ce1) - 7r1n1t3
+- add AGENTS.md - (05fd480) - 7r1n1t3
+- remove github mirror notice - (2fb3b0c) - 7r1n1t3
+
+- - -
+
 
 ## 0.1.0 - 2026-06-16
 
