@@ -26,10 +26,10 @@ pub async fn verify_credentials(
         return Ok((-1, false));
     };
 
-    return Ok((
+    Ok((
         user_id,
         password::verify_password(password, &password_hash).unwrap_or(false),
-    ));
+    ))
 }
 
 pub fn generate_session_hash() -> Result<Vec<u8>, getrandom::Error> {
@@ -51,18 +51,18 @@ pub async fn register_user(pool: &PgPool, user: &User) -> Result<ID, DatabaseErr
     .bind(&user.display_name)
     .bind(&user.email_address)
     .bind(&user.password_hash)
-    .bind(&user.password_hash_algorithm)
-    .bind(&user.user_role)
+    .bind(user.password_hash_algorithm)
+    .bind(user.user_role)
     .fetch_one(pool)
     .await?;
 
     log::info!(
         "Created user {0}[{1}]",
         user_id,
-        user.email_address.to_string()
+        user.email_address
     );
 
-    return Ok(user_id);
+    Ok(user_id)
 }
 
 pub async fn register_session(
@@ -84,13 +84,13 @@ async fn store_session(pool: &PgPool, session: &Session) -> Result<(), sqlx::Err
         VALUES ($1, $2, $3, $4, $5, $6, $7)
     "#,
     )
-    .bind(&session.user_id)
+    .bind(session.user_id)
     .bind(&session.session_hash)
-    .bind(&session.ip_address)
+    .bind(session.ip_address)
     .bind(&session.user_agent)
-    .bind(&session.created_at)
-    .bind(&session.expires_at)
-    .bind(&session.revoked_at)
+    .bind(session.created_at)
+    .bind(session.expires_at)
+    .bind(session.revoked_at)
     .execute(pool)
     .await?;
 
