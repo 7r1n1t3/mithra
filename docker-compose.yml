@@ -21,7 +21,6 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/db:/docker-entrypoint-initdb.d:ro
 
   redis:
     image: redis:8.8-alpine

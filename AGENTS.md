@@ -26,13 +26,32 @@ cargo test
 cargo fmt && cargo clippy
 ```
 
-There is no migration tool and no ORM: the schema lives in one plain SQL file,
-`backend/db/01_init_db.sql` (enum types, tables, then indexes), which `docker-compose.yml` mounts
-into the `db` container at `/docker-entrypoint-initdb.d` so a fresh Postgres volume is
-initialised from it. Editing the schema means editing that file directly and keeping the
-Rust-side structs/enums in `backend/src/auth/models.rs` in sync by hand. Because the file only
-runs on first init, a schema change needs the `postgres_data` volume recreated to take effect
-locally.
+Schema changes go through **diesel migrations**, which are the only part of diesel still in the
+project — it is the migration runner, not the query layer. Each migration is a directory
+`backend/migrations/yyyy-mm-dd-desc/` holding `up.sql` and `down.sql`; `src/migrations.rs` bakes
+them into the binary with `embed_migrations!("migrations")` and `main.rs` awaits
+`migrations::run(&database_url)` on startup, before the sqlx pool is built, so a fresh database
+self-initialises on first boot and the runtime image ships no `.sql` files. Diesel tracks what it
+has applied in a `__diesel_schema_migrations` table it creates itself, so startup is a no-op once
+the schema is current. Note it records the directory name with the punctuation stripped
+(`2026-08-30-initial-schema` → `20260830initialschema`), and orders migrations by that string —
+keep the `yyyy-mm-dd` prefix so ordering stays chronological.
+
+Adding a migration means creating the directory and both `.sql` files by hand (there is no
+`diesel_cli` dependency here); `down.sql` is never run by the app, it exists so a revert is
+possible with `diesel migration revert` if you install the CLI. Rust-side structs and enums in
+`backend/src/auth/models.rs` are kept in sync with the schema manually — nothing is generated.
+
+The connection is async: `migrations::run` establishes a `diesel_async::AsyncPgConnection` and
+hands it to `AsyncConnectionWrapper`, since `MigrationHarness` is a blocking trait — the wrapper
+drives the connection's futures internally, so the harness call itself is wrapped in
+`spawn_blocking` and must never run directly on an async worker. Using `diesel-async` (with
+diesel's `postgres_backend` feature rather than `postgres`) keeps the pure-Rust tokio-postgres
+path, so the binary links no libpq and needs no extra system packages in either Docker stage.
+
+Because migrations run in-process, Postgres needs no init scripts: `docker-compose.yml` mounts
+nothing into `/docker-entrypoint-initdb.d`; the Dockerfile only has to `COPY backend/migrations`
+into the build stage so `embed_migrations!` can find them.
 
 Queries are written with sqlx's *runtime* API (`sqlx::query`, `query_as`, `query_scalar` with
 `.bind(...)`), not the compile-time-checked `query!` macros — so there is no `.sqlx` offline
@@ -59,8 +78,9 @@ bun run check    # svelte-kit sync && svelte-check
 
 ### Backend request flow
 
-`main.rs` wires up an Actix `App` with, in order: access-log middleware, `SessionMiddleware`
-(Redis-backed via `actix-session`/`RedisSessionStore`), `AppState` (holds the sqlx `PgPool`,
+On startup `main.rs` first applies any pending diesel migrations (see above), then builds the
+sqlx pool. It then wires up an Actix `App` with, in order: access-log middleware,
+`SessionMiddleware` (Redis-backed via `actix-session`/`RedisSessionStore`), `AppState` (the pool,
 built with `PgPoolOptions::max_connections(5)`), the `/api` route tree, and a static-file
 fallback that serves `./build` (the compiled frontend) with `200.html` as both the index and the
 SPA fallback — i.e. this is a single Actix server serving an API and an SPA, not two separately
@@ -76,13 +96,15 @@ Module layout under `backend/src/`:
   (request/response JSON shapes), `extractor` (`AuthedUser`, an Actix `FromRequest` that pulls
   the user id out of the session — see below), `error` (`DatabaseError`, wrapping `sqlx::Error`
   and `SessionInsertError`).
-- `services/` — business logic called from route handlers, and the only place raw SQL lives:
+- `services/` — business logic called from route handlers, and where all runtime SQL lives:
   `auth.rs` (credential verification, user/session registration, login-attempt logging),
   `password.rs` (Argon2 hashing/verification via the `argon2` crate). `verify_credentials`
   returns `Result<(ID, bool), sqlx::Error>` — `(-1, false)` is the sentinel for "no such user",
   `(id, false)` means bad password.
 - `state.rs` — `AppState { pgpool: PgPool }`, cloned into each worker and injected via
   `web::Data`.
+- `migrations.rs` — the embedded diesel migrations (`MIGRATIONS`) and `run(database_url)`, called
+  once from `main` before anything else touches the database.
 
 Auth model: sessions are dual-written — once to Postgres (`sessions` table, for audit/history)
 and once into the Redis-backed Actix session cookie (`services::auth::cache_session`, key

@@ -6,6 +6,7 @@ use log::info;
 use sqlx::postgres::PgPoolOptions;
 
 mod auth;
+mod migrations;
 mod routes;
 mod services;
 mod state;
@@ -34,6 +35,12 @@ async fn main() -> std::io::Result<()> {
     // Postgres
     let postgres_url =
         std::env::var("DATABASE_URL").expect("DATABASE_URL environment variable must be set");
+
+    // Bring the schema up to date before serving anything.
+    migrations::run(&postgres_url)
+        .await
+        .expect("Failed to run database migrations");
+
     let pgpool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&postgres_url)

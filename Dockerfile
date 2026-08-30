@@ -22,8 +22,9 @@ RUN cargo fetch
 ## || true allows to succeed even if a dependency wasn't available (as it's being compiled in here as well)
 RUN cargo build --release || true
 
-## Copy the actual source code
+## Copy the actual source code and the embedded migrations
 COPY backend/src src
+COPY backend/migrations migrations
 
 ## clean
 RUN cargo clean -p mithra
