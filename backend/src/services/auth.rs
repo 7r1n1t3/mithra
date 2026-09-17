@@ -43,8 +43,8 @@ pub async fn register_user(pool: &PgPool, user: &User) -> Result<ID, DatabaseErr
         r#"
         INSERT INTO users
         (username, display_name, email_address, password_hash, password_hash_algorithm, user_role)
-        OUTPUT user_id
         VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id
         "#,
     )
     .bind(&user.username)
